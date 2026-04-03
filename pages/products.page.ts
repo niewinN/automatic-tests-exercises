@@ -1,4 +1,4 @@
-import { test, expect, Page, Locator } from '@playwright/test';
+import { expect, Page, Locator } from '@playwright/test';
 
 export class ProductsPage {
     readonly page: Page;
@@ -10,6 +10,8 @@ export class ProductsPage {
     readonly nameOfProduct: Locator;
     readonly priceOfProduct: Locator;
     readonly backpackCard: Locator;
+    readonly sortingPanel: Locator;
+    readonly productPrices: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -23,6 +25,8 @@ export class ProductsPage {
             has: page.getByText('Sauce Labs Backpack')
         })
         this.priceOfProduct = this.backpackCard.locator('.inventory_item_price')
+        this.sortingPanel = page.locator('[data-test="product-sort-container"]')
+        this.productPrices = page.locator('[data-test="inventory-item-price"]')
     }
 
     async expectLoaded() {
@@ -42,6 +46,15 @@ export class ProductsPage {
         await expect(this.numberOfProductsInCard).toHaveText(String(count))
     }
 
+    async getNumberOfProductsInCart() {
+        let number = await this.numberOfProductsInCard.textContent()
+        if (Number(number) === 0) {
+            await expect(this.numberOfProductsInCard).toHaveCount(0)
+            return
+        }
+
+    }
+
     async removeProductFromCart() {
         await this.removeFromCartButton.click()
     }
@@ -59,5 +72,21 @@ export class ProductsPage {
         }
 
         return {name, price}
+    }
+
+    async sortProductsByPriceLowToHigh() {
+        await this.sortingPanel.selectOption('lohi')
+    }
+
+    async getAllProductPrices() {
+        const pricesText = await this.productPrices.allTextContents()
+        return pricesText.map(price => Number(price.replace('$', '')))
+    }
+
+    async expectProductsSortedByPriceLowToHigh() {
+        const prices = await this.getAllProductPrices()
+        const sortedPrices = [...prices].sort((a, b) => a - b)
+
+        expect(prices).toEqual(sortedPrices)
     }
 }
