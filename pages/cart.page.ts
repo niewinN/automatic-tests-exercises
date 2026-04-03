@@ -1,16 +1,19 @@
 import { expect, Page, Locator } from '@playwright/test';
+import { HeaderComponent } from './components/header.component';
 
 export class CartPage {
     readonly page: Page;
     readonly nameOfProduct: Locator;
     readonly priceOfProduct: Locator;
     readonly checkoutButton: Locator;
+    readonly header: HeaderComponent;
 
     constructor(page: Page) {
         this.page = page;
         this.nameOfProduct = page.locator('.cart_item .inventory_item_name')
         this.priceOfProduct = page.locator('.cart_item .inventory_item_price')
         this.checkoutButton = page.locator('[data-test="checkout"]')
+        this.header = new HeaderComponent(page)
     }
 
     async expectProductVisibleInCart(name: string) {

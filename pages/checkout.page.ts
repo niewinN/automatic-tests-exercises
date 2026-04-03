@@ -1,4 +1,5 @@
 import { expect, Page, Locator } from '@playwright/test';
+import { HeaderComponent } from './components/header.component';
 
 export class CheckoutPage {
     readonly page: Page;
@@ -8,6 +9,7 @@ export class CheckoutPage {
     readonly nameInput: Locator;
     readonly surnameInput: Locator;
     readonly zipCodeInput: Locator;
+    readonly header: HeaderComponent;
 
     constructor(page: Page) {
         this.page = page;
@@ -17,6 +19,7 @@ export class CheckoutPage {
         this.nameInput = page.locator('[data-test="firstName"]')
         this.surnameInput = page.locator('[data-test="lastName"]')
         this.zipCodeInput = page.locator('[data-test="postalCode"]')
+        this.header = new HeaderComponent(page)
     }
 
     async expectCheckoutPageVisibility() {

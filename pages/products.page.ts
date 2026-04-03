@@ -1,4 +1,6 @@
 import { expect, Page, Locator } from '@playwright/test';
+import { HeaderComponent } from './components/header.component';
+import { SidebarComponent } from './components/sidebar.component';
 
 export class ProductsPage {
     readonly page: Page;
@@ -12,6 +14,9 @@ export class ProductsPage {
     readonly backpackCard: Locator;
     readonly sortingPanel: Locator;
     readonly productPrices: Locator;
+    readonly header: HeaderComponent;
+    readonly productTitle: Locator;
+    readonly sidebar: SidebarComponent;
 
     constructor(page: Page) {
         this.page = page;
@@ -27,6 +32,9 @@ export class ProductsPage {
         this.priceOfProduct = this.backpackCard.locator('.inventory_item_price')
         this.sortingPanel = page.locator('[data-test="product-sort-container"]')
         this.productPrices = page.locator('[data-test="inventory-item-price"]')
+        this.header = new HeaderComponent(page)
+        this.productTitle = page.locator('[data-test="inventory-item-name"]')
+        this.sidebar = new SidebarComponent(page)
     }
 
     async expectLoaded() {
@@ -44,15 +52,6 @@ export class ProductsPage {
         }
 
         await expect(this.numberOfProductsInCard).toHaveText(String(count))
-    }
-
-    async getNumberOfProductsInCart() {
-        let number = await this.numberOfProductsInCard.textContent()
-        if (Number(number) === 0) {
-            await expect(this.numberOfProductsInCard).toHaveCount(0)
-            return
-        }
-
     }
 
     async removeProductFromCart() {
@@ -88,5 +87,17 @@ export class ProductsPage {
         const sortedPrices = [...prices].sort((a, b) => a - b)
 
         expect(prices).toEqual(sortedPrices)
+    }
+
+    async sortProductsByNameZToA() {
+        await this.sortingPanel.selectOption('za')
+    }
+
+    async expectProductsSortedByNameZToA() {
+        const productTitles = await this.productTitle.allTextContents()
+
+        const sortedProductTitles = [...productTitles].sort((a, b) => b.localeCompare(a))
+
+        expect(productTitles).toEqual(sortedProductTitles)
     }
 }

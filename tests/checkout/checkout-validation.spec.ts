@@ -1,10 +1,7 @@
-import { standardUser } from "../../data/users"
 import {test} from "../../fixtures/test.fixture"
 
 
-test('user proceed without completing checkout form', async({loginPage, productsPage, cartPage, checkoutPage}) => {
-    await loginPage.goto()
-    await loginPage.login(standardUser.username, standardUser.password)
+test('user proceed without completing checkout form', async({productsPage, cartPage, checkoutPage, loggedInStandardUser: _}) => {
     await productsPage.addToCart()
     await productsPage.redirectToCartPage()
     await cartPage.redirectToCheckoutPage()

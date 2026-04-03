@@ -5,6 +5,7 @@ import { CartPage } from '../pages/cart.page';
 import { CheckoutPage } from '../pages/checkout.page';
 import { CheckoutOverviewPage } from '../pages/checkout-overview.page';
 import { SuccessPage } from '../pages/success.page';
+import { standardUser } from '../data/users';
 
 type Fixtures = {
     loginPage: LoginPage;
@@ -13,6 +14,7 @@ type Fixtures = {
     checkoutPage: CheckoutPage;
     checkoutOverviewPage: CheckoutOverviewPage;
     successPage: SuccessPage;
+    loggedInStandardUser: void;
 }
 
 export const test = base.extend<Fixtures>({
@@ -38,8 +40,13 @@ export const test = base.extend<Fixtures>({
 
     successPage: async({page}, use) => {
         await use(new SuccessPage(page))
-    }
+    },
 
+    loggedInStandardUser: async({loginPage}, use) => {
+        await loginPage.goto()
+        await loginPage.login(standardUser.username, standardUser.password)
+        await use()
+    }
 })
 
 export {expect};

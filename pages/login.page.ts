@@ -28,4 +28,9 @@ export class LoginPage {
     async expectErrorVisible() {
         await expect(this.errorMessage).toBeVisible()
     }
+
+    async expectLoaded() {
+        await expect(this.page).toHaveURL('https://www.saucedemo.com/')
+        await expect(this.loginButton).toBeVisible()
+    }
 }
